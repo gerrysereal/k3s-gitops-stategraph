@@ -35,40 +35,33 @@ resource "helm_release" "argocd" {
   namespace  = kubernetes_namespace.argocd.metadata[0].name
   version    = "6.7.11"
 
-  
   set {
     name  = "server.service.type"
     value = "NodePort"
   }
-}
 
 
-resource "kubernetes_manifest" "argocd_app" {
-  depends_on = [helm_release.argocd]
-  manifest = {
-    apiVersion = "argoproj.io/v1alpha1"
-    kind       = "Application"
-    metadata = {
-      name      = "nginx-demo"
-      namespace = kubernetes_namespace.argocd.metadata[0].name
-    }
-    spec = {
-      project = "default"
-      source = {
-        repoURL        = "https://github.com/gerrysereal/k3s-gitops-stategraph.git"
-        targetRevision = "HEAD"
-        path           = "apps/nginx-demo"
-      }
-      destination = {
-        server    = "https://kubernetes.default.svc"
-        namespace = "default"
-      }
-      syncPolicy = {
-        automated = {
-          prune    = true
-          selfHeal = true
-        }
-      }
-    }
-  }
+  values = [
+    <<-EOT
+    extraObjects:
+      - apiVersion: argoproj.io/v1alpha1
+        kind: Application
+        metadata:
+          name: nginx-demo
+          namespace: argocd
+        spec:
+          project: default
+          source:
+            repoURL: https://github.com/gerrysereal/k3s-gitops-stategraph.git
+            targetRevision: HEAD
+            path: apps/nginx-demo
+          destination:
+            server: https://kubernetes.default.svc
+            namespace: default
+          syncPolicy:
+            automated:
+              prune: true
+              selfHeal: true
+    EOT
+  ]
 }
