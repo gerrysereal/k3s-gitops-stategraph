@@ -1,5 +1,11 @@
 terraform {
   required_version = ">= 1.5.0"
+
+  
+  backend "local" {
+    path = "/home/aiko/.terraform-state/k3s-gitops.tfstate"
+  }
+
   required_providers {
     kubernetes = {
       source  = "hashicorp/kubernetes"
