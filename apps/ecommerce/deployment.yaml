@@ -15,7 +15,8 @@ spec:
     spec:
       containers:
       - name: ecommerce
-        image: ghcr.io/gerrysereal/ecommerce:latest
+        image: asia.gcr.io/gerry-production/ecommerce:eea575d
+        imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 3000
 
