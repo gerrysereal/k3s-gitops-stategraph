@@ -4,7 +4,7 @@ metadata:
   name: secure-nginx
   namespace: default
 spec:
-  replicas: 4
+  replicas: 2
   selector:
     matchLabels:
       app: secure-nginx
@@ -24,3 +24,17 @@ spec:
         securityContext:
           allowPrivilegeEscalation: false
           readOnlyRootFilesystem: true
+        volumeMounts:
+        - name: tmp-volume
+          mountPath: /tmp
+        - name: var-cache-nginx
+          mountPath: /var/cache/nginx
+        - name: var-run
+          mountPath: /var/run
+      volumes:
+      - name: tmp-volume
+        emptyDir: {}
+      - name: var-cache-nginx
+        emptyDir: {}
+      - name: var-run
+        emptyDir: {}
