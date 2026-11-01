@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: ecommerce
-        image: asia.gcr.io/gerry-production/ecommerce:600d850
+        image: asia.gcr.io/gerry-production/ecommerce:9214b46
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 3000
