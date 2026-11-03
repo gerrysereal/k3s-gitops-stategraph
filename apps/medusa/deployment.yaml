@@ -104,7 +104,7 @@ spec:
     spec:
       containers:
       - name: medusa
-        image: ghcr.io/gerrysereal/medusa:latest
+        image: ghcr.io/gerrysereal/medusa:52153217
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 9000
