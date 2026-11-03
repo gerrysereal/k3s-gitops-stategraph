@@ -1,0 +1,56 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: dependency-track
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dependency-track
+  namespace: dependency-track
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dependency-track
+  template:
+    metadata:
+      labels:
+        app: dependency-track
+    spec:
+      containers:
+      - name: dtrack-apiserver
+        image: dependencytrack/apiserver:latest
+        env:
+        - name: JAVA_OPTIONS
+          value: "-XX:MaxRAMPercentage=75.0"
+        ports:
+        - containerPort: 8080
+        resources:
+          requests:
+            memory: "768Mi"
+          limits:
+            memory: "1536Mi"
+      - name: dtrack-frontend
+        image: dependencytrack/frontend:latest
+        env:
+        - name: API_BASE_URL
+          value: "http://localhost:8090"
+        ports:
+        - containerPort: 8080
+        resources:
+          limits:
+            memory: "128Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dtrack-svc
+  namespace: dependency-track
+spec:
+  selector:
+    app: dependency-track
+  ports:
+  - name: api
+    port: 8090
+    targetPort: 8080

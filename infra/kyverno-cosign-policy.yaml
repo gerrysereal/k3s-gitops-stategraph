@@ -1,0 +1,31 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: verify-cosign-image-signature
+spec:
+  validationFailureAction: Audit
+  background: false
+  webhookTimeoutSeconds: 30
+  rules:
+    - name: check-ghcr-signature
+      match:
+        any:
+        - resources:
+            kinds:
+              - Pod
+            namespaces:
+              - default
+      verifyImages:
+      - imageReferences:
+        - "ghcr.io/gerrysereal/medusa*"
+        - "ghcr.io/gerrysereal/juice-shop*"
+        mutateDigest: false
+        verifyDigest: false
+        attestors:
+        - entries:
+          - keys:
+              publicKeys: |-
+                  -----BEGIN PUBLIC KEY-----
+                  MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEOepu07Gz/MR0FRmTbiRqYY5AKfCn
+                  64RMOQryIFbNsxbW4qYcpLf/p4ZlyelRxTDwr/IIAVCwhOLGvKmhp2NmcA==
+                  -----END PUBLIC KEY-----

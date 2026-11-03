@@ -1,0 +1,53 @@
+apiVersion: external-secrets.io/v1beta1
+kind: ExternalSecret
+metadata:
+  name: juiceshop-external-secret
+  namespace: default
+spec:
+  refreshInterval: "1m"
+  secretStoreRef:
+    name: vault-backend
+    kind: SecretStore
+  target:
+    name: juiceshop-vault-env
+  dataFrom:
+  - extract:
+      key: juice-shop
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: juice-shop
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: juice-shop
+  template:
+    metadata:
+      labels:
+        app: juice-shop
+    spec:
+      containers:
+      - name: juice-shop
+        image: ghcr.io/gerrysereal/juice-shop:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 3000
+        envFrom:
+        - secretRef:
+            name: juiceshop-vault-env
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: juice-shop-svc
+  namespace: default
+spec:
+  selector:
+    app: juice-shop
+  ports:
+  - port: 3000
+    targetPort: 3000
+EOF
