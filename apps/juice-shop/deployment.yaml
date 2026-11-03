@@ -31,7 +31,7 @@ spec:
     spec:
       containers:
       - name: juice-shop
-        image: ghcr.io/gerrysereal/juice-shop:latest
+        image: ghcr.io/gerrysereal/juice-shop:a996d35
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 3000
